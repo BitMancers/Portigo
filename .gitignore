@@ -1,0 +1,5 @@
+.env
+build
+pb_data
+web/build
+web/dist
