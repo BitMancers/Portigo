@@ -7,11 +7,14 @@ build:
 migrate:
 	go run ./cmd/portigo/ migrate $(cmd) $(name)
 
+dev:
+	go run ./cmd/portigo serve --dev
+
 run: build
 	./build/portigo serve --dev
 
 watch:
-	watchexec -e go -r "make run"
+	watchexec -e go -r "make dev"
 
 clean:
 	rm -rf build pb_data

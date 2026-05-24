@@ -48,8 +48,8 @@ type NetworkInterface struct {
 	IPv4 []IPAddress `db:"ipv4" json:"ipv4"`
 	IPv6 []IPAddress `db:"ipv6" json:"ipv6"`
 
-	GatewayIPv4 string `db:"gateway_ipv4 "json:"gateway_ipv4"`
-	GatewayIPv6 string `db:"gateway_ipv6 "json:"gateway_ipv6"`
+	GatewayIPv4 string `db:"gateway_ipv4" json:"gateway_ipv4"`
+	GatewayIPv6 string `db:"gateway_ipv6" json:"gateway_ipv6"`
 
 	DNS []string `db:"dns" json:"dns"`
 

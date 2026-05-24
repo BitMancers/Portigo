@@ -5,8 +5,8 @@ type ContainerSpec struct {
 	Image         string            `db:"image" json:"image"`
 	Command       []string          `db:"command" json:"command"`
 	Env           map[string]string `db:"env,omitempty" json:"env,omitempty"`
-	Ports         PortMapping       `db:"ports,omitempty" json:"ports,omitempty"`
-	Volumes       VolumeMount       `db:"volumes,omitempty" json:"volumes,omitempty"`
+	Ports         PortMapping       `db:"ports" json:"ports"`
+	Volumes       VolumeMount       `db:"volumes" json:"volumes"`
 	Limits        ResourceLimits    `db:"limits" json:"limits"`
 	RestartPolicy RestartPolicy     `db:"restart_policy" json:"restart_policy"`
 }
