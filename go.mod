@@ -1,6 +1,6 @@
 module portigo
 
-go 1.26.3
+go 1.25.9
 
 require (
 	github.com/pocketbase/pocketbase v0.38.1
