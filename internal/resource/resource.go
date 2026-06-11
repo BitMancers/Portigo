@@ -27,6 +27,7 @@ type Resource[TSpec any, TStatus any] struct {
 }
 
 type Driver[TSpec any, TStatus any] interface {
+	Init(ctx context.Context, res Resource[TSpec, TStatus]) error
 	Create(ctx context.Context, res Resource[TSpec, TStatus]) error
 	Start(ctx context.Context, name string) error
 	Stop(ctx context.Context, name string) error

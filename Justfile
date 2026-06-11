@@ -10,10 +10,13 @@ run: build
 
 dev:
   mkdir -p build
-  go run ./cmd/portigo serve --dev --dir build
+  go run ./cmd/portigo serve --dev --dir ./build
 
 watch:
   watchexec -e go -r "just dev"
 
 clean:
 	rm -rf build pb_data
+
+tests:
+  go test ./...

@@ -1,0 +1,10 @@
+- Managing VMs
+- Managing Docker
+- " LXC
+- " Network resources
+- Lua DSL to manage all of them
+- Dependeny Graph
+- Reconciliation system
+- PAM/Portigo based authentication
+- GUI for all of it
+- Backups and Snapshots

@@ -1,4 +1,4 @@
-.PHONY: migrate all build run clean
+.PHONY: migrate all build run clean tests
 
 build:
 	mkdir -p build
@@ -18,3 +18,6 @@ watch:
 
 clean:
 	rm -rf build pb_data
+
+tests:
+  go test ./...

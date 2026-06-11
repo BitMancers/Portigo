@@ -1,12 +1,17 @@
 package main
 
 import (
-	"portigo/internal/engine"
-	"portigo/internal/resource"
+	"log"
+
+	"github.com/BitMancers/Portigo/internal/engine"
+	"github.com/BitMancers/Portigo/internal/resource"
 )
 
 func main() {
-	resource.InitLibvirt()
+	_, err := resource.InitLibvirt()
+	if err != nil {
+		log.Fatal(err)
+	}
 	engine.Init()
 	engine.Start()
 }

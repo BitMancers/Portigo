@@ -3,13 +3,11 @@ package engine
 import (
 	"log"
 	"os"
-	"portigo/data"
 
+	"github.com/BitMancers/Portigo/data"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
-
-	_ "portigo/migrations"
 )
 
 var app *pocketbase.PocketBase = nil
@@ -18,6 +16,7 @@ func Init() {
 	app = pocketbase.New()
 
 	data.RunMigrations(app)
+
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 
 		se.Router.GET("/hello", func(re *core.RequestEvent) error {
@@ -32,8 +31,8 @@ func Init() {
 func Start() {
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
+		panic(err)
 	}
-
 }
 
 func Shutdown() {
