@@ -3,9 +3,13 @@ package resource
 import (
 	"context"
 	"encoding/xml"
+	"log"
+	"os"
+	"os/exec"
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/sys/unix"
 	"libvirt.org/go/libvirt"
 )
 
@@ -43,7 +47,7 @@ type VMSpec struct {
 
 type VMStatus struct {
 	Phase       VMPhase     `db:"phase" json:"phase"`
-	Node        string      `db:"node" json:"node"`
+	Infra       string      `db:"node" json:"node"`
 	IPs         []string    `db:"ips" json:"ips"`
 	Running     bool        `db:"running" json:"running"`
 	Uptime      int16       `db:"uptime" json:"uptime"`
@@ -107,6 +111,7 @@ const (
 
 type VM Resource[VMSpec, VMStatus]
 
+// Libvirt XML specific struct
 type DomainType string
 
 const (
@@ -221,13 +226,26 @@ type LibvirtDomainBuilder struct {
 }
 
 func NewLibvirtDomainBuilder() *LibvirtDomainBuilder {
+	vmUUID := uuid.NewString()
 	return &LibvirtDomainBuilder{
 		domain: &LibvirtDomain{
 			XMLName: xml.Name{
 				Space: "",
 				Local: "domain",
 			},
-			UUID: uuid.NewString(),
+			UUID: vmUUID,
+		},
+		spec: &VM{
+			Kind: "vm",
+			Status: VMStatus{
+				Phase:       VMPhaseCreate,
+				Infra:       "-",
+				IPs:         []string{},
+				Running:     false,
+				Uptime:      0,
+				LastStarted: time.Time{},
+				Conditions:  []Condition{},
+			},
 		},
 	}
 }
@@ -241,9 +259,11 @@ type OverviewSetupConfig struct {
 func (lb *LibvirtDomainBuilder) SetupOverview(cfg OverviewSetupConfig) *LibvirtDomainBuilder {
 	lb.domain.UUID = uuid.NewString()
 	lb.domain.Name = cfg.Name
-	lb.domain.XMLName.Local = "domain"
+	lb.spec.ID = cfg.VMID
+	lb.spec.Metadata.Name = cfg.Name + string(cfg.VMID)
+	lb.spec.Kind = ResourceKindVM
 
-	return nil
+	return lb
 }
 
 type StorageType string
@@ -263,7 +283,8 @@ type StorageConfig struct {
 }
 
 func (lb *LibvirtDomainBuilder) SetupStorage(cfg StorageConfig) *LibvirtDomainBuilder {
-	return nil
+
+	return lb
 }
 
 type NetworkSetupConfig struct {
@@ -273,7 +294,7 @@ type NetworkSetupConfig struct {
 }
 
 func (lb *LibvirtDomainBuilder) SetupNetwork(cfg NetworkSetupConfig) *LibvirtDomainBuilder {
-	return nil
+	return lb
 }
 
 type HardwareSetupConfig struct {
@@ -285,7 +306,7 @@ type HardwareSetupConfig struct {
 }
 
 func (lb *LibvirtDomainBuilder) SetupHardware(cfg HardwareSetupConfig) *LibvirtDomainBuilder {
-	return nil
+	return lb
 }
 
 type AdvancedSetupConfig struct {
@@ -305,10 +326,10 @@ type AdvancedSetupConfig struct {
 }
 
 func (lb *LibvirtDomainBuilder) SetupAdvanced(cfg AdvancedSetupConfig) *LibvirtDomainBuilder {
-	return nil
+	return lb
 }
 
-func (lb *LibvirtDomainBuilder) Build() LibvirtDomain { return *lb.domain }
+func (lb *LibvirtDomainBuilder) Build() (LibvirtDomain, VM, error) { return *lb.domain, *lb.spec, nil }
 
 func (vm *VM) Init(ctx context.Context, res VM) error { return nil }
 

@@ -19,7 +19,7 @@ const (
 )
 
 type Resource[TSpec any, TStatus any] struct {
-	ID       string       `json:"id"`
+	ID       int32        `json:"id"`
 	Kind     ResourceKind `json:"kind"`
 	Metadata Metadata     `json:"metadata"`
 	Spec     TSpec        `json:"spec"`
@@ -39,6 +39,7 @@ type Driver[TSpec any, TStatus any] interface {
 
 type Metadata struct {
 	Name        string            `db:"name" json:"name"`
+	Description string            `db:"description" json:"description"`
 	Namespace   string            `db:"namespace" json:"namespace,omitempty"`
 	Labels      map[string]string `db:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `db:"annotations,omitempty" json:"annotations,omitempty"`

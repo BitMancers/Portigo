@@ -1,4 +1,4 @@
-[ ] Manage VMs
-    [ ] create VM
-    [ ] update VMs
-    [ ] delete VMs
+- [ ] Manage VMs
+    - [ ] create VM
+    - [ ] update VMs
+    - [ ] delete VMs

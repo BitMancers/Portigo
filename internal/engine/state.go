@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"github.com/pocketbase/pocketbase"
 	"libvirt.org/go/libvirt"
 )
 
@@ -15,6 +16,7 @@ const (
 )
 
 type EngineState struct {
+	PB     *pocketbase.PocketBase
 	LVConn *libvirt.Connect
 
 	// libvirt conn state
@@ -22,6 +24,8 @@ type EngineState struct {
 	// probably pocketbase state?
 	// mutexes?
 }
+
+var State EngineState
 
 type IResourceState interface {
 	CheckState() ResourceState

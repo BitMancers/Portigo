@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-	_, err := resource.InitLibvirt()
+	conn, err := resource.InitLibvirt()
 	if err != nil {
 		log.Fatal(err)
 	}
-	engine.Init()
+	engine.Init(conn)
 	engine.Start()
 }
