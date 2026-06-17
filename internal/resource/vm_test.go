@@ -3,48 +3,43 @@ package resource
 import (
 	"log"
 	"testing"
+
+	"libvirt.org/go/libvirt"
 )
 
 func TestCreateVMDomainAndSpecBuilder(t *testing.T) {
-	vmBuilder := NewLibvirtDomainBuilder()
-	vmXMLDomain, vmSpec, err := vmBuilder.SetupOverview(OverviewSetupConfig{
-		VMID: 0,
-		Name: "",
-		Desc: "",
-	}).
+	conn, err := libvirt.NewConnect("qemu:///system")
+	if err != nil {
+		t.Fatal("Error creating libvirt connection", err)
+	}
+	vmBuilder := NewLibvirtDomainBuilder(conn)
+	vmXMLDomain, vmSpec, err := vmBuilder.
+		SetupOverview(OverviewSetupConfig{
+			VMID: 0,
+			Name: "Alpine Test VM",
+			Desc: "Alpine test vm",
+		}).
 		SetupNetwork(NetworkSetupConfig{
-			Type:          "lan",
-			EmulationType: "virtio",
-			MacAddr:       "", // blank for randomized
+			Type:          VMNetworkDefault,
+			Source:        "default",
+			EmulationType: NetworkEmulationVirtIO,
+			MacAddr:       RandomMacAddress(),
+		}).
+		SetupOS(OSSetupConfig{
+			Arch:         "x86_64",
+			InstallType:  OSInstallISO,
+			FileLocation: "tmp/alpine.iso",
 		}).
 		SetupStorage(StorageConfig{
-			Type:         StorageTypeRaw,
-			Pool:         "root",
-			Size:         20 << 30, // 20 MB
-			Interface:    DiskInterfaceVirtIO,
-			InstallMedia: "tmp/file.iso",
-		}).
-		SetupHardware(HardwareSetupConfig{
-			Sockets:        1,
-			Cores:          1,
-			Threads:        1,
-			Memory:         "2GB",
-			PCIPassthrough: "",
-		}).
-		SetupAdvanced(AdvancedSetupConfig{
-			VNCPort:                      -1, // -1 means auto allocate
-			VNCPassword:                  "randompassword",
-			VNCResolution:                "800x480",
-			ClockOffset:                  "",
-			StartupShutdownOrder:         0,
-			SerialConsole:                true,
-			VNWait:                       false,
-			StartOnBoot:                  false,
-			TPM:                          false,
-			EnableCloudInit:              false,
-			CloudInit:                    "",
-			IgnoreUnimplementedMSRAccess: false,
-			QEMUGuestAgent:               true,
+			StorageType:     StorageTypeZFS,
+			DiskType:        DiskTypeFile,
+			Pool:            "rpool",
+			DiskDeviceType:  DiskDeviceDisk,
+			DiskBusType:     DiskTargetBusVirtIO,
+			Size:            32 << 30,
+			Interface:       DiskInterfaceVirtIO,
+			InstallLocation: "",
+			ReadOnly:        false,
 		}).
 		Build()
 

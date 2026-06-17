@@ -4,6 +4,8 @@ import (
 	"net/netip"
 )
 
+// TODO: add network creation for libvirt network
+
 type NetInterfaceType string
 
 const (

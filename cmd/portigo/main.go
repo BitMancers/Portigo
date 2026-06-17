@@ -9,9 +9,13 @@ import (
 
 func main() {
 	conn, err := resource.InitLibvirt()
+
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer conn.Close()
+
 	engine.Init(conn)
 	engine.Start()
+
 }
